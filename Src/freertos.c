@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */     
 #include "APP_heartBeat.h"
 #include "APP_CANTest.h"
+#include "APP_ledDriver.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,6 +50,7 @@
 /* USER CODE BEGIN Variables */
 osThreadId tsk_heartBeatID;
 osThreadId tsk_CANTestID;
+osThreadId tsk_ledDriverID;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 
@@ -98,6 +100,11 @@ void MX_FREERTOS_Init(void) {
 
   osThreadDef(CANTest,tsk_CANTest,osPriorityNormal,1,100);
   tsk_CANTestID = osThreadCreate(osThread(CANTest),0);
+
+  osThreadDef(ledDriver,tsk_ledDriver,osPriorityNormal,1,100);
+  tsk_ledDriverID = osThreadCreate(osThread(ledDriver),0);
+
+
   /* USER CODE END RTOS_THREADS */
 
 }

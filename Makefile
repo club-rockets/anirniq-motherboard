@@ -72,8 +72,9 @@ APP/APP_CANTest.c \
 Drivers/canDriver.c \
 BSP/BSP_CAN.c \
 Src/spi.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c
-
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c \
+APP/APP_ledDriver.c\
+BSP/BSP_ledDriver.c
 
 # ASM sources
 ASM_SOURCES =  \
