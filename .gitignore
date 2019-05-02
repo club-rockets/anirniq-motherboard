@@ -12,8 +12,7 @@ bin/
 # TrueStudio & STM32
 .settings/
 .mxproject
-.project
-.cproject
 
 # VS Code
 .vscode/
+.code_review_properties
