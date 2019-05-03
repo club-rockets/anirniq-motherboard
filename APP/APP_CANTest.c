@@ -8,7 +8,7 @@
 
 #include "APP_CANTest.h"
 #include "BSP_CAN.h"
-#include "canDriver.h"
+#include "can_driver.h"
 
 void tsk_CANTest(void const * argument){
 	can_regData_u data = {.UINT32_T = 123};

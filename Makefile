@@ -69,12 +69,13 @@ Src/stm32f4xx_it.c \
 Src/stm32f4xx_hal_msp.c \
 APP/APP_heartBeat.c \
 APP/APP_CANTest.c \
-Drivers/canDriver.c \
+../shared/drivers/can/can_driver.c \
 BSP/BSP_CAN.c \
 Src/spi.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c \
 APP/APP_ledDriver.c \
-BSP/BSP_ledDriver.c
+BSP/BSP_ledDriver.c 
+
 
 # ASM sources
 ASM_SOURCES =  \
@@ -141,7 +142,9 @@ C_INCLUDES =  \
 -IMiddlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F \
 -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy \
 -IAPP \
--IBSP
+-IBSP \
+-I../shared/bsp \
+-I../shared/drivers/can
 
 
 # compile gcc flags
