@@ -64,7 +64,7 @@ uint32_t can_canInit(){
 	filter.mask11.ID1 = BOARD_MOTHERBOARD_ID_SHIFTED;
 
 	canSetFilter(&can1Instance,&filter,mask11Bit,2,0);
-
+	NVIC_SetPriority(20,10);
 	return 0;
 }
 
@@ -78,7 +78,7 @@ uint32_t can_canSetRegisterData(uint32_t index,can_regData_u* data){
 	can_registers[CAN_BOARD][index].lastTick = HAL_GetTick();
 	can1Fifo0InitIt(&can1Instance);
 	//send register
-	while(!canSendPacket(&can1Instance,(CAN_BOARD_ID<<1)&(index<<(1+BOARD_ID_SIZE)),0,CAN_REG_DATA_SIZE,data));
+	while(!canSendPacket(&can1Instance,(CAN_BOARD_ID<<1)|(index<<(1+BOARD_ID_SIZE)),0,CAN_REG_DATA_SIZE,data));
 
 	//call callback
 	if(can_registers[CAN_BOARD][index].changeCallback){
@@ -105,9 +105,9 @@ uint32_t can_getRegisterTimestamp(enum can_board board, uint32_t index){
 	return can_registers[board][index].lastTick;
 }
 
-uint32_t can_setRegisterCallback(uint32_t index, void (*callback)(uint32_t,uint32_t)){
+uint32_t can_setRegisterCallback(enum can_board board, uint32_t index, void (*callback)(uint32_t,uint32_t)){
 
-	can_registers[CAN_BOARD][index].changeCallback = callback;
+	can_registers[board][index].changeCallback = callback;
 	return 1;
 }
 
@@ -139,9 +139,7 @@ uint32_t can_canSetRegisterLoopback(uint32_t board, uint32_t index,can_regData_u
 		return 0;
 	}
 	//send register
-	canSendPacket(&can1Instance,(board<<1)|(index<<(1+BOARD_ID_SIZE)),0,CAN_REG_DATA_SIZE,data);
-
-	return 1;
+	return canSendPacket(&can1Instance,(board<<1)|(index<<(1+BOARD_ID_SIZE)),0,CAN_REG_DATA_SIZE,data);
 }
 
 //set local register without sending it to canbus (use for testing)

@@ -9,6 +9,13 @@
 #include "APP_CANTest.h"
 #include "BSP_CAN.h"
 #include "can_driver.h"
+#include "BSP_can_regDef.h"
+
+void sendDataYeild(uint32_t board,uint32_t index,can_regData_u* data){
+	while(!can_canSetRegisterLoopback(board,index,data)){
+		osThreadYield();
+	}
+}
 
 void tsk_CANTest(void const * argument){
 	can_regData_u data = {.UINT32_T = 123};
@@ -18,7 +25,20 @@ void tsk_CANTest(void const * argument){
 	can_canInit();
 
 	while(1){
+		data.UINT32_T = 0x123;
 		can_canSetRegisterLoopback(1,0,&data);
+		data.UINT32_T = 1;
+		//can_canSetRegisterData(0,&data);
+		sendDataYeild(MOTHERBOARD,CAN_MOTHERBOARD_HEARTBEAT_INDEX,&data);
+		sendDataYeild(MISSION,CAN_MISSION_HEARTBEAT_INDEX,&data);
+		sendDataYeild(COMMUNICATION,CAN_COMMUNICATION_HEARTBEAT_INDEX,&data);
+		sendDataYeild(ACQUISITION,CAN_ACQUISITION_HEARTBEAT_INDEX,&data);
+		osDelay(1000);
+		data.UINT32_T = 2;
+		sendDataYeild(MOTHERBOARD,CAN_MOTHERBOARD_HEARTBEAT_INDEX,&data);
+		sendDataYeild(MISSION,CAN_MISSION_HEARTBEAT_INDEX,&data);
+		sendDataYeild(COMMUNICATION,CAN_COMMUNICATION_HEARTBEAT_INDEX,&data);
+		sendDataYeild(ACQUISITION,CAN_ACQUISITION_HEARTBEAT_INDEX,&data);
 		osDelay(1000);
 		can_getRegisterData(1,0,&dat);
 	}

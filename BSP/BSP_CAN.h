@@ -63,7 +63,7 @@ uint32_t can_getRegisterData(enum can_board board, uint32_t index, can_regData_u
 
 uint32_t can_getRegisterTimestamp(enum can_board board, uint32_t index);
 
-uint32_t can_setRegisterCallback(uint32_t index, void (*callback)(uint32_t,uint32_t));
+uint32_t can_setRegisterCallback(enum can_board board, uint32_t index, void (*callback)(uint32_t,uint32_t));
 
 //called on reception of a new packet
 void can_regUpdateCallback(void);
