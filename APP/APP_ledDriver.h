@@ -8,6 +8,7 @@
 
 void tsk_ledDriver(void const * argument);
 
+void ledDriverButtonPressed();
 
 #define MOTHERBOARD_LED_INDEX	1
 #define ACQUISITION_LED_INDEX	2

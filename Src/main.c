@@ -23,6 +23,7 @@
 #include "cmsis_os.h"
 #include "spi.h"
 #include "gpio.h"
+#include "APP_ledDriver.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -71,6 +72,7 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
+  
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -157,7 +159,11 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+	if(GPIO_Pin == GPIO_PIN_3){
+		ledDriverButtonPressed();
+	}
+}
 /* USER CODE END 4 */
 
 /**

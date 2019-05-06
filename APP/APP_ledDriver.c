@@ -14,6 +14,12 @@
 
 #define LED_NEW_DATA 1
 
+volatile enum{
+	off = 0,
+	status,
+	party
+} ledState = off;
+
 void ledTest();
 void stateChangeCallback(uint32_t board,uint32_t id);
 
@@ -48,37 +54,54 @@ void tsk_ledDriver(void const * argumen){
 		//ledTest();
 
 		//poll for signal
-		do{
-			signalValue = osSignalWait(LED_NEW_DATA,osWaitForever);
-		}while(signalValue.value.v != 1);
+		signalValue = osSignalWait(LED_NEW_DATA,osWaitForever);
+		if(signalValue.value.v == 1);
+		else continue;
 
-		//clear led data
-		ledDriver_clearAll();
-
-		//read all registers
-		//motherboard
-
-		can_getRegisterData(MOTHERBOARD,CAN_MOTHERBOARD_HEARTBEAT_INDEX,&regData);
-		if(regData.UINT32_T < moduleLedColorsSize){
-			ledDriver_setLED(MOTHERBOARD_LED_INDEX,moduleLedColors[regData.UINT32_T]);
+		if(ledState == off){
+			ledDriver_clearAll();
+			ledDriver_sendAll();
+			continue;
 		}
 
-		can_getRegisterData(ACQUISITION,CAN_ACQUISITION_HEARTBEAT_INDEX,&regData);
-		if(regData.UINT32_T < moduleLedColorsSize){
-			ledDriver_setLED(ACQUISITION_LED_INDEX,moduleLedColors[regData.UINT32_T]);
-		}
-		can_getRegisterData(COMMUNICATION,CAN_COMMUNICATION_HEARTBEAT_INDEX,&regData);
-		if(regData.UINT32_T < moduleLedColorsSize){
-			ledDriver_setLED(COMMUNICATION_LED_INDEX,moduleLedColors[regData.UINT32_T]);
-		}
-		can_getRegisterData(MISSION,CAN_MISSION_HEARTBEAT_INDEX,&regData);
-		if(regData.UINT32_T < moduleLedColorsSize){
-			ledDriver_setLED(MISSION_LED_INDEX,moduleLedColors[regData.UINT32_T]);
-		}
-		//send data
 
-		ledDriver_sendAll();
-		osDelay(100);
+		else if(ledState == status){
+			//clear led data
+					ledDriver_clearAll();
+
+					//read all registers
+					//motherboard
+
+					can_getRegisterData(MOTHERBOARD,CAN_MOTHERBOARD_HEARTBEAT_INDEX,&regData);
+					if(regData.UINT32_T < moduleLedColorsSize){
+						ledDriver_setLED(MOTHERBOARD_LED_INDEX,moduleLedColors[regData.UINT32_T]);
+					}
+
+					can_getRegisterData(ACQUISITION,CAN_ACQUISITION_HEARTBEAT_INDEX,&regData);
+					if(regData.UINT32_T < moduleLedColorsSize){
+						ledDriver_setLED(ACQUISITION_LED_INDEX,moduleLedColors[regData.UINT32_T]);
+					}
+					can_getRegisterData(COMMUNICATION,CAN_COMMUNICATION_HEARTBEAT_INDEX,&regData);
+					if(regData.UINT32_T < moduleLedColorsSize){
+						ledDriver_setLED(COMMUNICATION_LED_INDEX,moduleLedColors[regData.UINT32_T]);
+					}
+					can_getRegisterData(MISSION,CAN_MISSION_HEARTBEAT_INDEX,&regData);
+					if(regData.UINT32_T < moduleLedColorsSize){
+						ledDriver_setLED(MISSION_LED_INDEX,moduleLedColors[regData.UINT32_T]);
+					}
+					//send data
+
+					ledDriver_sendAll();
+					osDelay(100);
+		}
+
+		else{
+			while(ledState == party){
+				ledTest();
+			}
+		}
+
+
 	}
 
 }
@@ -123,3 +146,13 @@ void stateChangeCallback(uint32_t board,uint32_t id){
 	osSignalSet(tsk_ledDriverID,LED_NEW_DATA);
 }
 
+void ledDriverButtonPressed(){
+	static uint32_t counter = 0;
+	if(HAL_GetTick() - counter > 10){
+		counter = HAL_GetTick();
+		osSignalSet(tsk_ledDriverID,LED_NEW_DATA);
+		ledState++;
+		ledState%=3;
+	}
+
+}

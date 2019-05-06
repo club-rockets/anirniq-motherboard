@@ -64,8 +64,6 @@ void Error_Handler(void);
 #define PC15_OSC32_OUT_GPIO_Port GPIOC
 #define PH0_OSC_IN_Pin GPIO_PIN_0
 #define PH0_OSC_IN_GPIO_Port GPIOH
-#define B1_Pin GPIO_PIN_0
-#define B1_GPIO_Port GPIOA
 #define LED_1_Pin GPIO_PIN_12
 #define LED_1_GPIO_Port GPIOD
 #define LED_2_Pin GPIO_PIN_13
