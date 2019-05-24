@@ -74,8 +74,8 @@ Src/spi.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c \
 APP/APP_ledDriver.c \
 BSP/BSP_ledDriver.c \
-../shared/bsp/BSP_can_regDef.c \
-../shared/bsp/BSP_CAN.c
+../shared/bsp/bsp_can_regdef.c \
+../shared/bsp/bsp_can.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -144,7 +144,7 @@ C_INCLUDES =  \
 -IAPP \
 -IBSP \
 -I../shared/bsp \
--I../shared/drivers/can
+-I../shared/drivers
 
 
 # compile gcc flags
