@@ -78,3 +78,61 @@ uint32_t ledDriver_sendAll(){
 	HAL_SPI_Transmit_IT(&hspi1,buff1,sizeof(led_drv));
 	return 1;
 }
+
+
+RGBVal_t HsvToRgb(HSVVal_t hsv)
+{
+    RGBVal_t rgb;
+    uint16_t region, remainder, p, q, t;
+
+    if (hsv.s == 0)
+    {
+        rgb.R = hsv.v;
+        rgb.G = hsv.v;
+        rgb.B = hsv.v;
+        return rgb;
+    }
+
+    region = hsv.h / 0x2AAA;
+    remainder = (hsv.h - (region * 0x2AAA)) * 6; 
+
+    p = (hsv.v * (0xFFFF - hsv.s)) >> 8;
+    q = (hsv.v * (0xFFFF - ((hsv.s * remainder) >> 8))) >> 8;
+    t = (hsv.v * (0xFFFF - ((hsv.s * (0xFFFF - remainder)) >> 8))) >> 8;
+
+    switch (region)
+    {
+        case 0:
+            rgb.R = hsv.v; 
+			rgb.G = t;
+			rgb.B = p;
+            break;
+        case 1:
+            rgb.R = q;
+			rgb.G = hsv.v;
+			rgb.B = p;
+            break;
+        case 2:
+            rgb.R = p; 
+			rgb.G = hsv.v; 
+			rgb.B = t;
+            break;
+        case 3:
+            rgb.R = p;
+			rgb.G = q;
+			rgb.B = hsv.v;
+            break;
+        case 4:
+            rgb.R = t;
+			rgb.G = p;
+			rgb.B = hsv.v;
+            break;
+        default:
+            rgb.R = hsv.v;
+			rgb.G = p;
+			rgb.B = q;
+            break;
+    }
+
+    return rgb;
+}

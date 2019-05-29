@@ -110,35 +110,20 @@ void ledTest(){
 
 	static RGBVal_t led = {0};
 	static uint8_t i = 0;
+	static unsigned initial_hue = 0;
 
-		led.R = 0xffff;
-		led.G = 0;
-		led.B = 0;
-		for(i = 0;i<8;i++){
-			ledDriver_setLED(i,led);
-			ledDriver_sendAll();
-			ledDriver_clearAll();
-			osDelay(100);
-		}
-		led.R = 0;
-		led.G = 0xffff;
-		led.B = 0;
-		for(i = 0;i<8;i++){
-			ledDriver_setLED(i,led);
-			ledDriver_sendAll();
-			ledDriver_clearAll();
-			osDelay(100);
-		}
-		led.R = 0;
-		led.G = 0;
-		led.B = 0xffff;;
-		for(i = 0;i<8;i++){
-			ledDriver_setLED(i,led);
-			ledDriver_sendAll();
-			ledDriver_clearAll();
-			osDelay(100);
-		}
 
+	for(i = 0; i < 8; i++) {
+		HSVVal_t val = { .h = (i * 0x2AAA) % 0xFFFF, .s = 0xFFFF, .v = 0xFFFF };
+		ledDriver_setLED(i, HsvToRgb(val));
+	}
+	ledDriver_sendAll();
+
+	initial_hue += 0x000F;
+	if (initial_hue > 0xFFFF) {
+		initial_hue %= 0xFFFF;
+	}
+	osDelay(20);
 }
 
 

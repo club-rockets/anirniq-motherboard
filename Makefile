@@ -144,7 +144,8 @@ C_INCLUDES =  \
 -IAPP \
 -IBSP \
 -I../shared/bsp \
--I../shared/drivers
+-I../shared/drivers \
+-I../shared/interfaces \
 
 
 # compile gcc flags
