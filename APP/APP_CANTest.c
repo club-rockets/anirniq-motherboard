@@ -25,6 +25,10 @@ void tsk_CANTest(void const * argument){
 	can_canInit();
 
 	while(1){
+		osThreadYield();
+	}
+
+	while(1){
 		data.UINT32_T = 0x123;
 		can_canSetRegisterLoopback(1,0,&data);
 		data.UINT32_T = 1;

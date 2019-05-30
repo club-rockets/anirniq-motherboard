@@ -23,11 +23,11 @@
 #include "cmsis_os.h"
 #include "spi.h"
 #include "gpio.h"
-#include "APP_ledDriver.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "APP_ledDriver.h"
+#include "bsp_can.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,7 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern canInstance_t can1Instance;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -135,9 +135,9 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 12;
-  RCC_OscInitStruct.PLL.PLLN = 72;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV6;
+  RCC_OscInitStruct.PLL.PLLM = 25;
+  RCC_OscInitStruct.PLL.PLLN = 336;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -152,7 +152,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
     Error_Handler();
   }
@@ -164,6 +164,62 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 		ledDriverButtonPressed();
 	}
 }
+
+
+uint32_t can_canInit()
+{
+    //initialise IO's
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+
+    //Configure GPIO pins : PB8 PB9
+    GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    can1Instance.instance = CAN1;
+    can1Instance.debugFreeze = 0;
+    can1Instance.opMode = normal;
+    can1Instance.baudPrescaler = 3;
+    can1Instance.timeQuanta1 = 14;
+    can1Instance.timeQuanta2 = 11;
+    can1Instance.timeReSync = 2;
+
+    canInit(&can1Instance);
+    //init interruption for fan 1 fifo 0
+    can1Fifo0InitIt(&can1Instance);
+    can1Fifo0RegisterCallback(can_regUpdateCallback);
+
+    //init filters for boards
+
+    canFilter_t filter = {0};
+
+    filter.mask11.mask0 = BOARD_ID_MASK;
+    filter.mask11.ID0 = BOARD_EMERGENCY_ID_SHIFTED;
+    filter.mask11.mask1 = BOARD_ID_MASK;
+    filter.mask11.ID1 = BOARD_MISSION_ID_SHIFTED;
+    canSetFilter(&can1Instance, &filter,mask11Bit, 0, 0);
+
+    filter.mask11.mask0 = BOARD_ID_MASK;
+    filter.mask11.ID0 = BOARD_COMMUNICATION_ID_SHIFTED;
+    filter.mask11.mask1 = BOARD_ID_MASK;
+    filter.mask11.ID1 = BOARD_ACQUISITION_ID_SHIFTED;
+    canSetFilter(&can1Instance, &filter,mask11Bit, 1, 0);
+
+    filter.mask11.mask0 = BOARD_ID_MASK;
+    filter.mask11.ID0 = BOARD_MOTHERBOARD_ID_SHIFTED;
+    filter.mask11.mask1 = BOARD_ID_MASK;
+    filter.mask11.ID1 = BOARD_MOTHERBOARD_ID_SHIFTED;
+
+    canSetFilter(&can1Instance, &filter,mask11Bit, 2, 0);
+    NVIC_SetPriority(20, 10);
+    return 0;
+}
+
 /* USER CODE END 4 */
 
 /**
