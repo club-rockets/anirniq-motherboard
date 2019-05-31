@@ -80,59 +80,64 @@ uint32_t ledDriver_sendAll(){
 }
 
 
-RGBVal_t HsvToRgb(HSVVal_t hsv)
+RGBVal_t HsvToRgb(HSVValf_t in)
 {
-    RGBVal_t rgb;
-    uint16_t region, remainder, p, q, t;
+    float hh, p, q, t, ff;
+    long  i;
+    float r, g, b;
 
-    if (hsv.s == 0)
-    {
-        rgb.R = hsv.v;
-        rgb.G = hsv.v;
-        rgb.B = hsv.v;
-        return rgb;
+    hh = in.h;
+    if(hh >= 360.0f) {
+		hh = 0.0f;
+	}
+
+    hh /= 60.0f;
+    i = (long) hh;
+    ff = hh - i;
+
+    p = in.v * (1.0f - in.s);
+    q = in.v * (1.0f - (in.s * ff));
+    t = in.v * (1.0f - (in.s * (1.0 - ff)));
+
+    switch(i) {
+		case 0:
+			r = in.v;
+			g = t;
+			b = p;
+			break;
+		case 1:
+			r = q;
+			g = in.v;
+			b = p;
+			break;
+		case 2:
+			r = p;
+			g = in.v;
+			b = t;
+			break;
+
+		case 3:
+			r = p;
+			g = q;
+			b = in.v;
+			break;
+		case 4:
+			r = t;
+			g = p;
+			b = in.v;
+			break;
+		case 5:
+		default:
+			r = in.v;
+			g = p;
+			b = q;
+			break;
     }
 
-    region = hsv.h / 0x2AAA;
-    remainder = (hsv.h - (region * 0x2AAA)) * 6; 
-
-    p = (hsv.v * (0xFFFF - hsv.s)) >> 8;
-    q = (hsv.v * (0xFFFF - ((hsv.s * remainder) >> 8))) >> 8;
-    t = (hsv.v * (0xFFFF - ((hsv.s * (0xFFFF - remainder)) >> 8))) >> 8;
-
-    switch (region)
-    {
-        case 0:
-            rgb.R = hsv.v; 
-			rgb.G = t;
-			rgb.B = p;
-            break;
-        case 1:
-            rgb.R = q;
-			rgb.G = hsv.v;
-			rgb.B = p;
-            break;
-        case 2:
-            rgb.R = p; 
-			rgb.G = hsv.v; 
-			rgb.B = t;
-            break;
-        case 3:
-            rgb.R = p;
-			rgb.G = q;
-			rgb.B = hsv.v;
-            break;
-        case 4:
-            rgb.R = t;
-			rgb.G = p;
-			rgb.B = hsv.v;
-            break;
-        default:
-            rgb.R = hsv.v;
-			rgb.G = p;
-			rgb.B = q;
-            break;
-    }
-
-    return rgb;
+	RGBVal_t ret = {
+		.R = r * 0xFFFF,
+		.G = g * 0xFFFF,
+		.B = b * 0xFFFF
+	};
+	return ret;
 }

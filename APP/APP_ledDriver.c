@@ -108,22 +108,23 @@ void tsk_ledDriver(void const * argumen){
 
 void ledTest(){
 
-	static RGBVal_t led = {0};
-	static uint8_t i = 0;
-	static unsigned initial_hue = 0;
+	HSVValf_t val = { .h = 0.0f, .s = 1.0f, .v = 1.0f };
+	uint8_t i;
+	float hue = 0;
 
+	while (1) {
+		for(i = 0; i < 8; i++) {
+			val.h = hue + (i * 60.0f);
+			if (val.h > 360.0f) {
+				val.h -= 360.f;
+			}
+			ledDriver_setLED(i, HsvToRgb(val));
+		}
+		ledDriver_sendAll();
 
-	for(i = 0; i < 8; i++) {
-		HSVVal_t val = { .h = (i * 0x2AAA) % 0xFFFF, .s = 0xFFFF, .v = 0xFFFF };
-		ledDriver_setLED(i, HsvToRgb(val));
+		osDelay(20);
+		hue += 1.0f;
 	}
-	ledDriver_sendAll();
-
-	initial_hue += 0x000F;
-	if (initial_hue > 0xFFFF) {
-		initial_hue %= 0xFFFF;
-	}
-	osDelay(20);
 }
 
 

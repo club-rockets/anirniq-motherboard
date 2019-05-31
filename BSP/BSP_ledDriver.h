@@ -24,10 +24,10 @@ typedef struct __attribute__ ((__packed__)) {
 } RGBVal_t;
 
 typedef struct HsvColor {
-    uint16_t h;
-	uint16_t s;
-	uint16_t v;
-} HSVVal_t;
+    float h;
+	float s;
+	float v;
+} HSVValf_t;
 
 uint32_t ledDriver_init(uint8_t currentR,uint8_t currentG,uint8_t currentB);
 
@@ -37,6 +37,6 @@ uint32_t ledDriver_clearAll();
 
 uint32_t ledDriver_sendAll();
 
-RGBVal_t HsvToRgb(HSVVal_t hsv);
+RGBVal_t HsvToRgb(HSVValf_t hsv);
 
 #endif /* BSP_BSP_LEDDRIVER_H_ */
