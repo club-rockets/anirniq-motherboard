@@ -145,6 +145,7 @@ C_INCLUDES =  \
 -IBSP \
 -I../shared/bsp \
 -I../shared/drivers \
+-I../shared/drivers/can \
 -I../shared/interfaces
 
 
