@@ -25,7 +25,7 @@ void tsk_CANTest(void const * argument){
 	can_canInit();
 
 	while(1){
-		osThreadYield();
+		osDelay(1000);
 	}
 
 	while(1){

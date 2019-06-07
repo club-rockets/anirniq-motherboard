@@ -11,6 +11,7 @@
 #include "bsp_can.h"
 #include "main.h"
 #include "bsp_can_regdef.h"
+#include "id.h"
 
 #define LED_NEW_DATA 1
 
