@@ -123,7 +123,11 @@ void ledTest(){
 		ledDriver_sendAll();
 
 		osDelay(20);
-		hue += 1.0f;
+		hue += 10.0f;
+		
+		if (hue > 360.0f) {
+			hue -= 360.0f;
+		}
 	}
 }
 
