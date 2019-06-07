@@ -52,14 +52,14 @@ osThreadId tsk_heartBeatID;
 osThreadId tsk_CANTestID;
 
 /* USER CODE END Variables */
-osThreadId defaultTaskHandle;
+osThreadId app_powerMonitoHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
    
 /* USER CODE END FunctionPrototypes */
 
-void StartDefaultTask(void const * argument);
+void tsk_powerMonitor(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -106,9 +106,9 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  /* definition and creation of app_powerMonito */
+  osThreadDef(app_powerMonito, tsk_powerMonitor, osPriorityNormal, 0, 128);
+  app_powerMonitoHandle = osThreadCreate(osThread(app_powerMonito), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   osThreadDef(heartBeat,tsk_heartBeat,osPriorityLow,1,100);
@@ -125,23 +125,23 @@ void MX_FREERTOS_Init(void) {
 
 }
 
-/* USER CODE BEGIN Header_StartDefaultTask */
+/* USER CODE BEGIN Header_tsk_powerMonitor */
 /**
-  * @brief  Function implementing the defaultTask thread.
+  * @brief  Function implementing the app_powerMonito thread.
   * @param  argument: Not used 
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+/* USER CODE END Header_tsk_powerMonitor */
+__weak void tsk_powerMonitor(void const * argument)
 {
 
-  /* USER CODE BEGIN StartDefaultTask */
+  /* USER CODE BEGIN tsk_powerMonitor */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END StartDefaultTask */
+  /* USER CODE END tsk_powerMonitor */
 }
 
 /* Private application code --------------------------------------------------*/
