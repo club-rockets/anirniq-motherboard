@@ -113,7 +113,7 @@ void ledTest(){
 	uint8_t i;
 	float hue = 0;
 
-	while (1) {
+	while (ledState == party) {
 		for(i = 0; i < 8; i++) {
 			val.h = hue + (i * 60.0f);
 			if (val.h > 360.0f) {
