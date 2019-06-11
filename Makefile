@@ -79,7 +79,8 @@ BSP/BSP_ledDriver.c \
 Src/i2c.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c \
-APP/APP_powerMonitor.c
+APP/APP_powerMonitor.c \
+BSP/BSP_INA3221.c
 
 
 # ASM sources
