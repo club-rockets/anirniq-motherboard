@@ -16,3 +16,4 @@ bin/
 # VS Code
 .vscode/
 .code_review_properties
+.project
